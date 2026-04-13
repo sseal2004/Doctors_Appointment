@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.active hr{
+    @apply block
+}
+body {
+  @apply bg-white text-gray-900;
+  transition: background-color 0.4s ease, color 0.3s ease;
+}
+
+/* ✅ This is what makes dark mode work on body */
+.dark body {
+  @apply bg-gray-900 text-gray-100;
+}
