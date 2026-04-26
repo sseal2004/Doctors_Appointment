@@ -1,81 +1,120 @@
 import { createContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import axios from 'axios'
+import axios from "axios";
 
-export const AppContext = createContext()
+// ✅ Create Context
+export const AppContext = createContext();
 
-const AppContextProvider = (props) => {
+const AppContextProvider = ({ children }) => {
 
-    const currencySymbol = '₹'
-    const backendUrl = import.meta.env.VITE_BACKEND_URL
+    const currencySymbol = "₹";
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-    const [doctors, setDoctors] = useState([])
-    const [token, setToken] = useState(localStorage.getItem('token') ? localStorage.getItem('token') : '')
-    const [userData, setUserData] = useState(false)
+    console.log("🔥 Backend URL:", backendUrl);
 
-    // Getting Doctors using API
-    const getDoctosData = async () => {
+    const [doctors, setDoctors] = useState([]);
+    const [token, setToken] = useState(localStorage.getItem("token") || "");
+    const [userData, setUserData] = useState(null);
+
+    // ===============================
+    // 🔹 Get Doctors Data
+    // ===============================
+    const getDoctorsData = async () => {
+        console.log("📡 Calling getDoctorsData API...");
 
         try {
+            const { data } = await axios.get(`${backendUrl}/api/doctor/list`);
 
-            const { data } = await axios.get(backendUrl + '/api/doctor/list')
+            console.log("✅ Doctors API Response:", data);
+
             if (data.success) {
-                setDoctors(data.doctors)
+                setDoctors(data.doctors);
             } else {
-                toast.error(data.message)
+                console.log("❌ API returned success false");
+                toast.error(data.message);
             }
 
         } catch (error) {
-            console.log(error)
-            toast.error(error.message)
+            console.log("❌ Doctors API Error:", error);
+            toast.error(error.message);
         }
+    };
 
-    }
-
-    // Getting User Profile using API
+    // ===============================
+    // 🔹 Load User Profile
+    // ===============================
     const loadUserProfileData = async () => {
+        console.log("📡 Calling loadUserProfileData API...");
+        console.log("🔑 Token:", token);
 
         try {
+            const { data } = await axios.get(
+                `${backendUrl}/api/user/get-profile`,
+                { headers: { token } }
+            );
 
-            const { data } = await axios.get(backendUrl + '/api/user/get-profile', { headers: { token } })
+            console.log("✅ User Profile Response:", data);
 
             if (data.success) {
-                setUserData(data.userData)
+                setUserData(data.userData);
             } else {
-                toast.error(data.message)
+                console.log("❌ Profile API returned false");
+                toast.error(data.message);
             }
 
         } catch (error) {
-            console.log(error)
-            toast.error(error.message)
+            console.log("❌ Profile API Error:", error);
+            toast.error(error.message);
         }
+    };
 
-    }
-
+    // ===============================
+    // 🔹 Fetch doctors on load
+    // ===============================
     useEffect(() => {
-        getDoctosData()
-    }, [])
+        console.log("⚡ useEffect: backendUrl changed");
 
+        if (backendUrl) {
+            getDoctorsData();
+        } else {
+            console.log("❌ backendUrl is undefined");
+        }
+    }, [backendUrl]);
+
+    // ===============================
+    // 🔹 Load user when token changes
+    // ===============================
     useEffect(() => {
+        console.log("⚡ useEffect: token changed");
+
         if (token) {
-            loadUserProfileData()
+            loadUserProfileData();
+        } else {
+            console.log("⚠️ No token found, clearing userData");
+            setUserData(null);
         }
-    }, [token])
+    }, [token]);
 
+    // ===============================
+    // 🔹 Context Values
+    // ===============================
     const value = {
-        doctors, getDoctosData,
+        doctors,
+        getDoctorsData,
         currencySymbol,
         backendUrl,
-        token, setToken,
-        userData, setUserData, loadUserProfileData
-    }
+        token,
+        setToken,
+        userData,
+        setUserData,
+        loadUserProfileData,
+    };
 
     return (
         <AppContext.Provider value={value}>
-            {props.children}
+            {children}
         </AppContext.Provider>
-    )
+    );
+};
 
-}
-
-export default AppContextProvider
+export default AppContextProvider;
