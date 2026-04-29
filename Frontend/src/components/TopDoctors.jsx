@@ -1,10 +1,42 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AppContext } from '../context/AppContext'
 
 const TopDoctors = () => {
   const navigate = useNavigate()
   const { doctors } = useContext(AppContext)
+
+  // ── SLIDER STATE ──
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const autoSlideRef = useRef(null)
+  const CARDS_PER_VIEW = 5
+  const totalDoctors = doctors.slice(0, 10)
+  const maxIndex = totalDoctors.length - CARDS_PER_VIEW
+
+  const startAutoSlide = () => {
+    clearInterval(autoSlideRef.current)
+    autoSlideRef.current = setInterval(() => {
+      setCurrentIndex(prev => (prev >= maxIndex ? 0 : prev + 1))
+    }, 2500)
+  }
+
+  useEffect(() => {
+    startAutoSlide()
+    return () => clearInterval(autoSlideRef.current)
+  }, [maxIndex])
+
+  const goTo = (index) => {
+    setCurrentIndex(index)
+    startAutoSlide()
+  }
+
+  const goPrev = () => {
+    goTo(currentIndex <= 0 ? maxIndex : currentIndex - 1)
+  }
+
+  const goNext = () => {
+    goTo(currentIndex >= maxIndex ? 0 : currentIndex + 1)
+  }
 
   return (
     <>
@@ -69,7 +101,6 @@ const TopDoctors = () => {
         }
 
         /* ── ECG ANIMATIONS ── */
-        /* Main ECG line traveling across */
         @keyframes ecg-travel {
           0%   { stroke-dashoffset: 2400; opacity: 0; }
           5%   { opacity: 1; }
@@ -88,14 +119,6 @@ const TopDoctors = () => {
           90%  { opacity: 0.4; }
           100% { stroke-dashoffset: 0; opacity: 0; }
         }
-        /* Glowing dot that runs along the ECG line */
-        @keyframes ecg-dot-run {
-          0%   { offset-distance: 0%;   opacity: 0; }
-          3%   { opacity: 1; }
-          95%  { opacity: 1; }
-          100% { offset-distance: 100%; opacity: 0; }
-        }
-        /* Pulse ripple from the spike peak */
         @keyframes ecg-ripple {
           0%   { r: 3;  opacity: 0.8; }
           100% { r: 22; opacity: 0; }
@@ -104,7 +127,6 @@ const TopDoctors = () => {
           0%   { r: 2;  opacity: 0.6; }
           100% { r: 16; opacity: 0; }
         }
-        /* Heartbeat icon pulse */
         @keyframes hb-pulse {
           0%,100% { transform: scale(1);   opacity: 0.18; }
           15%     { transform: scale(1.22); opacity: 0.32; }
@@ -119,12 +141,10 @@ const TopDoctors = () => {
           45%     { transform: scale(1.09); opacity: 0.18; }
           60%     { transform: scale(1);   opacity: 0.12; }
         }
-        /* Grid fade in */
         @keyframes ecg-fade-in {
           from { opacity: 0; }
           to   { opacity: 1; }
         }
-        /* Vertical scan bar */
         @keyframes ecg-scan-bar {
           0%   { left: -8%; opacity: 0; }
           5%   { opacity: 1; }
@@ -149,7 +169,6 @@ const TopDoctors = () => {
           animation: td-mesh-breathe 16s ease-in-out infinite;
         }
 
-        /* GRID TEXTURE */
         .td-root::before {
           content: '';
           position: absolute; inset: 0; z-index: 0; pointer-events: none;
@@ -170,7 +189,6 @@ const TopDoctors = () => {
           animation: ecg-fade-in 1.2s ease both;
         }
 
-        /* ECG lines */
         .ecg-line-1 {
           stroke-dasharray: 2400;
           stroke-dashoffset: 2400;
@@ -197,7 +215,6 @@ const TopDoctors = () => {
           animation: ecg-travel-3 11s cubic-bezier(0.4,0,0.6,1) 2.8s infinite;
         }
 
-        /* Ripple circles at spike peaks */
         .ecg-ripple-1 { animation: ecg-ripple  1.4s ease-out 1.4s infinite; }
         .ecg-ripple-2 { animation: ecg-ripple2 1.4s ease-out 1.55s infinite; }
         .ecg-ripple-3 { animation: ecg-ripple  1.4s ease-out 4.9s infinite; }
@@ -205,7 +222,6 @@ const TopDoctors = () => {
         .ecg-ripple-5 { animation: ecg-ripple  1.4s ease-out 3.2s infinite; }
         .ecg-ripple-6 { animation: ecg-ripple2 1.4s ease-out 3.35s infinite; }
 
-        /* Vertical scan bar */
         .td-ecg-scanbar {
           position: absolute; top: 0; bottom: 0; width: 8px;
           background: linear-gradient(90deg,
@@ -231,7 +247,6 @@ const TopDoctors = () => {
           pointer-events: none;
         }
 
-        /* Heart icon watermarks */
         .td-heart-bg {
           position: absolute; pointer-events: none;
           animation: hb-pulse 1.2s ease-in-out infinite;
@@ -241,7 +256,6 @@ const TopDoctors = () => {
           animation: hb-pulse-2 1.2s ease-in-out 0.6s infinite;
         }
 
-        /* FLOATING ORBS */
         .td-orb { position: absolute; border-radius: 50%; pointer-events: none; }
         .td-orb-1 {
           width: 520px; height: 520px; top: -180px; left: -160px; z-index: 1;
@@ -259,7 +273,6 @@ const TopDoctors = () => {
           animation: td-orb-drift 10s ease-in-out infinite reverse;
         }
 
-        /* SCAN LINE */
         .td-scanline {
           position: absolute; left: 0; right: 0; height: 2px; z-index: 3;
           background: linear-gradient(90deg,
@@ -273,7 +286,6 @@ const TopDoctors = () => {
           pointer-events: none;
         }
 
-        /* TOP + BOTTOM LINES */
         .td-topline {
           position: absolute; top: 0; left: 0; right: 0; height: 2px; z-index: 4;
           background: linear-gradient(90deg,
@@ -405,16 +417,68 @@ const TopDoctors = () => {
         .td-stat-num span { color: #6366f1; }
         .td-stat-lbl { font-size: 11px; color: #94a3b8; margin-top: 2px; font-weight: 300; }
 
-        /* ── DOCTOR GRID ── */
-        .td-grid {
-          display: grid;
-          grid-template-columns: repeat(5, 1fr);
-          gap: 20px;
-          padding: 0 28px;
+        /* ── SLIDER WRAPPER ── */
+        .td-slider-outer {
           position: relative; z-index: 10;
+          padding: 0 28px;
         }
 
-        /* ── DOCTOR CARD ── */
+        .td-slider-viewport {
+          overflow: hidden;
+          border-radius: 12px;
+        }
+
+        .td-slider-track {
+          display: flex;
+          gap: 20px;
+          transition: transform 0.55s cubic-bezier(0.25, 0.8, 0.25, 1);
+          will-change: transform;
+        }
+
+        /* Each card in slider takes exactly 1/5 of viewport minus gaps */
+        .td-slider-track .td-card {
+          flex: 0 0 calc((100%) / 5 - 16px);
+          min-width: 0;
+        }
+
+        /* Prev / Next arrow buttons */
+        .td-arrow {
+          position: absolute; top: 50%; transform: translateY(-50%);
+          width: 40px; height: 40px; border-radius: 50%; z-index: 20;
+          background: rgba(255,255,255,0.88);
+          backdrop-filter: blur(10px);
+          border: 1.5px solid rgba(99,102,241,0.25);
+          box-shadow: 0 4px 16px rgba(99,102,241,0.15);
+          display: flex; align-items: center; justify-content: center;
+          cursor: pointer; font-size: 16px; color: #6366f1;
+          transition: all 0.25s ease;
+        }
+        .td-arrow:hover {
+          background: linear-gradient(135deg, #6366f1, #3b82f6);
+          color: #fff; border-color: transparent;
+          box-shadow: 0 8px 24px rgba(99,102,241,0.35);
+        }
+        .td-arrow-prev { left: 0; }
+        .td-arrow-next { right: 0; }
+
+        /* Dot indicators */
+        .td-dots {
+          display: flex; justify-content: center; gap: 8px;
+          margin-top: 22px;
+        }
+        .td-dot {
+          width: 8px; height: 8px; border-radius: 50%;
+          background: rgba(99,102,241,0.2);
+          border: none; cursor: pointer; padding: 0;
+          transition: all 0.3s ease;
+        }
+        .td-dot.active {
+          background: #6366f1;
+          width: 22px; border-radius: 100px;
+          box-shadow: 0 0 8px rgba(99,102,241,0.4);
+        }
+
+        /* ── DOCTOR CARD (unchanged) ── */
         .td-card {
           border-radius: 22px; overflow: hidden; cursor: pointer;
           background: rgba(255,255,255,0.78);
@@ -582,13 +646,15 @@ const TopDoctors = () => {
 
         /* ── RESPONSIVE ── */
         @media (max-width: 1200px) {
-          .td-grid { grid-template-columns: repeat(4, 1fr); }
+          .td-slider-track .td-card { flex: 0 0 calc(100% / 4 - 15px); }
         }
         @media (max-width: 900px) {
-          .td-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; padding: 0 20px; }
+          .td-slider-track .td-card { flex: 0 0 calc(100% / 3 - 14px); }
+          .td-slider-outer { padding: 0 20px; }
         }
         @media (max-width: 640px) {
-          .td-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 0 16px; }
+          .td-slider-track .td-card { flex: 0 0 calc(100% / 2 - 12px); }
+          .td-slider-outer { padding: 0 16px; }
           .td-title { font-size: 34px; }
           .td-root { padding: 60px 0; }
           .td-stats { gap: 10px; padding: 0 16px; }
@@ -599,7 +665,6 @@ const TopDoctors = () => {
         {/* ── ECG BACKGROUND LAYER ── */}
         <div className="td-ecg-layer">
 
-          {/* Heart icon watermarks */}
           <svg className="td-heart-bg" style={{ width: 320, height: 320, top: '8%', left: '6%', opacity: 0.18 }} viewBox="0 0 100 100" fill="none">
             <path d="M50 85 C50 85 10 58 10 32 C10 20 20 12 32 16 C40 19 46 26 50 32 C54 26 60 19 68 16 C80 12 90 20 90 32 C90 58 50 85 50 85Z" fill="url(#hg1)" />
             <defs>
@@ -620,11 +685,9 @@ const TopDoctors = () => {
             </defs>
           </svg>
 
-          {/* Vertical scan bars */}
           <div className="td-ecg-scanbar" />
           <div className="td-ecg-scanbar-2" />
 
-          {/* Main SVG with ECG lines */}
           <svg
             className="td-ecg-svg"
             viewBox="0 0 1400 800"
@@ -632,7 +695,6 @@ const TopDoctors = () => {
             xmlns="http://www.w3.org/2000/svg"
           >
             <defs>
-              {/* Main ECG glow filter */}
               <filter id="ecg-glow-main" x="-20%" y="-100%" width="140%" height="300%">
                 <feGaussianBlur stdDeviation="3" result="blur" />
                 <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
@@ -647,7 +709,6 @@ const TopDoctors = () => {
                 <feMerge><feMergeNode in="blur1" /><feMergeNode in="blur2" /><feMergeNode in="SourceGraphic" /></feMerge>
               </filter>
 
-              {/* Gradients for lines */}
               <linearGradient id="ecg-grad-1" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%"   stopColor="rgba(99,102,241,0)" />
                 <stop offset="20%"  stopColor="rgba(99,102,241,0.7)" />
@@ -670,12 +731,6 @@ const TopDoctors = () => {
               </linearGradient>
             </defs>
 
-            {/* ── ECG LINE 1 — primary, top row ── */}
-            {/*
-              ECG path pattern: flat baseline → small bump → flat → sharp rise (P) →
-              drop to baseline → sharp tall spike (QRS) → deep dip (S) → rise back →
-              hump (T) → flat baseline … repeating
-            */}
             <path
               className="ecg-line-1"
               d="
@@ -721,7 +776,6 @@ const TopDoctors = () => {
               filter="url(#ecg-glow-main)"
             />
 
-            {/* ── ECG LINE 1 GLOW COPY (thicker, blurred) ── */}
             <path
               className="ecg-line-1"
               d="
@@ -767,11 +821,9 @@ const TopDoctors = () => {
               filter="url(#ecg-glow-strong)"
             />
 
-            {/* Ripple at spike peaks for line 1 */}
             <circle className="ecg-ripple-1" cx="215" cy="200" r="3" fill="none" stroke="rgba(99,102,241,0.6)" strokeWidth="1.5" />
             <circle className="ecg-ripple-2" cx="215" cy="200" r="2" fill="none" stroke="rgba(139,92,246,0.4)" strokeWidth="1" />
 
-            {/* ── ECG LINE 2 — second row, delayed ── */}
             <path
               className="ecg-line-2"
               d="
@@ -812,7 +864,6 @@ const TopDoctors = () => {
               strokeLinejoin="round"
               filter="url(#ecg-glow-soft)"
             />
-            {/* Glow copy for line 2 */}
             <path
               className="ecg-line-2"
               d="
@@ -856,7 +907,6 @@ const TopDoctors = () => {
             <circle className="ecg-ripple-3" cx="165" cy="420" r="3" fill="none" stroke="rgba(59,130,246,0.55)" strokeWidth="1.5" />
             <circle className="ecg-ripple-4" cx="165" cy="420" r="2" fill="none" stroke="rgba(6,182,212,0.35)" strokeWidth="1" />
 
-            {/* ── ECG LINE 3 — subtle, bottom band ── */}
             <path
               className="ecg-line-3"
               d="
@@ -899,7 +949,6 @@ const TopDoctors = () => {
             <circle className="ecg-ripple-5" cx="145" cy="630" r="3" fill="none" stroke="rgba(139,92,246,0.5)" strokeWidth="1.5" />
             <circle className="ecg-ripple-6" cx="145" cy="630" r="2" fill="none" stroke="rgba(99,102,241,0.3)" strokeWidth="1" />
 
-            {/* ── HORIZONTAL GUIDE LINES (subtle medical monitor look) ── */}
             <line x1="0" y1="200" x2="1400" y2="200" stroke="rgba(99,102,241,0.06)" strokeWidth="1" strokeDasharray="4 8" />
             <line x1="0" y1="420" x2="1400" y2="420" stroke="rgba(59,130,246,0.05)" strokeWidth="1" strokeDasharray="4 8" />
             <line x1="0" y1="630" x2="1400" y2="630" stroke="rgba(139,92,246,0.04)" strokeWidth="1" strokeDasharray="4 8" />
@@ -927,34 +976,61 @@ const TopDoctors = () => {
           <p className="td-sub">Verified, board-certified specialists ready to see you today.</p>
         </div>
 
-        {/* DOCTOR GRID */}
-        <div className="td-grid">
-          {doctors.slice(0, 10).map((item, index) => (
+        {/* ── SLIDER ── */}
+        <div className="td-slider-outer">
+          {/* Prev Arrow */}
+          <button className="td-arrow td-arrow-prev" onClick={goPrev}>‹</button>
+
+          {/* Viewport */}
+          <div className="td-slider-viewport">
             <div
-              key={index}
-              className="td-card"
-              onClick={() => { navigate(`/appointment/${item._id}`); scrollTo(0, 0) }}
+              className="td-slider-track"
+              style={{
+                transform: `translateX(calc(-${currentIndex} * (100% / 5 + 4px)))`
+              }}
             >
-              <div className="td-img-wrap">
-                <img src={item.image} alt={item.name} />
-                <div className="td-img-overlay" />
-                <div className="td-avail">
-                  <span className={`td-avail-dot ${item.available ? 'dot-on' : 'dot-off'}`} />
-                  {item.available ? 'Available' : 'Busy'}
+              {totalDoctors.map((item, index) => (
+                <div
+                  key={index}
+                  className="td-card"
+                  onClick={() => { navigate(`/appointment/${item._id}`); scrollTo(0, 0) }}
+                >
+                  <div className="td-img-wrap">
+                    <img src={item.image} alt={item.name} />
+                    <div className="td-img-overlay" />
+                    <div className="td-avail">
+                      <span className={`td-avail-dot ${item.available ? 'dot-on' : 'dot-off'}`} />
+                      {item.available ? 'Available' : 'Busy'}
+                    </div>
+                  </div>
+                  <div className="td-info">
+                    <div className="td-spec">{item.speciality}</div>
+                    <div className="td-name">{item.name}</div>
+                    <div className="td-footer">
+                      <div className="td-stars">★★★★★</div>
+                      <div className="td-badge">{item.available ? 'Top Rated' : 'Verified'}</div>
+                    </div>
+                    <button className="td-book-btn">
+                      Book Appointment →
+                    </button>
+                  </div>
                 </div>
-              </div>
-              <div className="td-info">
-                <div className="td-spec">{item.speciality}</div>
-                <div className="td-name">{item.name}</div>
-                <div className="td-footer">
-                  <div className="td-stars">★★★★★</div>
-                  <div className="td-badge">{item.available ? 'Top Rated' : 'Verified'}</div>
-                </div>
-                <button className="td-book-btn">
-                  Book Appointment →
-                </button>
-              </div>
+              ))}
             </div>
+          </div>
+
+          {/* Next Arrow */}
+          <button className="td-arrow td-arrow-next" onClick={goNext}>›</button>
+        </div>
+
+        {/* Dot Indicators */}
+        <div className="td-dots">
+          {Array.from({ length: maxIndex + 1 }).map((_, i) => (
+            <button
+              key={i}
+              className={`td-dot ${i === currentIndex ? 'active' : ''}`}
+              onClick={() => goTo(i)}
+            />
           ))}
         </div>
 
