@@ -67,6 +67,7 @@ const Navbar = () => {
           -webkit-backdrop-filter: blur(16px);
           border-bottom: 1px solid rgba(59,130,246,0.12);
           transition: all 0.3s ease;
+          width: 100%;
         }
 
         .nb.scrolled {
@@ -75,7 +76,6 @@ const Navbar = () => {
           box-shadow: 0 4px 32px rgba(0,0,0,0.4), 0 1px 0 rgba(99,102,241,0.15);
         }
 
-        /* GLOW LINE TOP */
         .nb-topline {
           height: 2px;
           background: linear-gradient(90deg,
@@ -96,9 +96,9 @@ const Navbar = () => {
           align-items: center;
           justify-content: space-between;
           gap: 24px;
+          width: 100%;
         }
 
-        /* LOGO */
         .nb-logo {
           display: flex;
           align-items: center;
@@ -107,6 +107,7 @@ const Navbar = () => {
           text-decoration: none;
           flex-shrink: 0;
           user-select: none;
+          min-width: 0;
         }
 
         .nb-logo-icon {
@@ -131,6 +132,7 @@ const Navbar = () => {
           display: flex;
           flex-direction: column;
           gap: 1px;
+          min-width: 0;
         }
 
         .nb-logo-name {
@@ -156,7 +158,6 @@ const Navbar = () => {
           text-transform: uppercase;
         }
 
-        /* NAV LINKS */
         .nb-links {
           display: flex;
           align-items: center;
@@ -164,6 +165,7 @@ const Navbar = () => {
           list-style: none;
           margin: 0;
           padding: 0;
+          flex-wrap: nowrap;
         }
 
         .nb-link {
@@ -177,6 +179,7 @@ const Navbar = () => {
           border: 1px solid transparent;
           transition: all 0.2s ease;
           letter-spacing: 0.01em;
+          white-space: nowrap;
         }
 
         .nb-link:hover {
@@ -204,7 +207,6 @@ const Navbar = () => {
           box-shadow: 0 0 8px rgba(99,102,241,0.6);
         }
 
-        /* RIGHT SIDE */
         .nb-right {
           display: flex;
           align-items: center;
@@ -212,9 +214,10 @@ const Navbar = () => {
           flex-shrink: 0;
         }
 
-        /* ADMIN BUTTON */
         .nb-admin-btn {
-          display: none;
+          display: flex;
+          align-items: center;
+          gap: 6px;
           font-family: 'Plus Jakarta Sans', sans-serif;
           font-size: 12.5px;
           font-weight: 600;
@@ -228,17 +231,12 @@ const Navbar = () => {
           letter-spacing: 0.02em;
         }
 
-        @media (min-width: 768px) {
-          .nb-admin-btn { display: flex; align-items: center; gap: 6px; }
-        }
-
         .nb-admin-btn:hover {
           color: #60A5FA;
           border-color: rgba(59,130,246,0.3);
           background: rgba(59,130,246,0.08);
         }
 
-        /* CREATE ACCOUNT BUTTON */
         .nb-cta {
           display: none;
           font-family: 'Plus Jakarta Sans', sans-serif;
@@ -266,7 +264,6 @@ const Navbar = () => {
 
         .nb-cta:active { transform: translateY(0); }
 
-        /* USER AVATAR */
         .nb-avatar-wrap {
           position: relative;
           cursor: pointer;
@@ -287,7 +284,6 @@ const Navbar = () => {
           box-shadow: 0 0 0 1px rgba(99,102,241,0.5), 0 0 20px rgba(99,102,241,0.35);
         }
 
-        /* DROPDOWN */
         .nb-dropdown {
           position: absolute;
           right: 0;
@@ -380,7 +376,6 @@ const Navbar = () => {
           box-shadow: 0 0 6px #EF4444;
         }
 
-        /* HAMBURGER */
         .nb-hamburger {
           display: flex;
           flex-direction: column;
@@ -413,7 +408,6 @@ const Navbar = () => {
         .nb-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
         .nb-hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(4.5px, -4.5px); background: #60A5FA; }
 
-        /* MOBILE MENU */
         .nb-mobile {
           display: block;
           background: rgba(6,9,18,0.98);
@@ -479,14 +473,56 @@ const Navbar = () => {
           box-shadow: 0 4px 14px rgba(99,102,241,0.3);
           letter-spacing: 0.01em;
         }
+
+        @media (max-width: 767px) {
+          .nb-inner {
+            padding: 0 16px;
+            height: 60px;
+            gap: 12px;
+          }
+
+          .nb-links {
+            display: none;
+          }
+
+          .nb-logo-name {
+            font-size: 16px;
+          }
+
+          .nb-logo-sub {
+            display: none;
+          }
+
+          .nb-right {
+            gap: 8px;
+          }
+
+          .nb-admin-btn {
+            display: flex !important;
+            padding: 7px 10px;
+            font-size: 11.5px;
+          }
+
+          .nb-cta {
+            display: none !important;
+          }
+
+          .nb-avatar {
+            width: 32px;
+            height: 32px;
+          }
+
+          .nb-dropdown {
+            width: 180px;
+            right: -10px;
+          }
+        }
       `}</style>
 
       <nav className={`nb${scrolled ? ' scrolled' : ''}`}>
         <div className="nb-topline" />
 
         <div className="nb-inner">
-
-          {/* LOGO */}
           <div className="nb-logo" onClick={() => navigate("/")}>
             <div className="nb-logo-icon">
               <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth={2.2}>
@@ -499,8 +535,7 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* NAV LINKS */}
-          <ul className="nb-links" style={{ display: 'none' }} ref={el => { if (el) el.style.display = 'flex'; }}>
+          <ul className="nb-links">
             {NAV_LINKS.map((link) => (
               <li key={link.to}>
                 <NavLink
@@ -513,10 +548,7 @@ const Navbar = () => {
             ))}
           </ul>
 
-          {/* RIGHT */}
           <div className="nb-right">
-
-            {/* ADMIN BUTTON */}
             {location.pathname === "/" && (
               <button
                 className="nb-admin-btn"
@@ -530,7 +562,6 @@ const Navbar = () => {
               </button>
             )}
 
-            {/* USER / CTA */}
             {token && userData ? (
               <div className="nb-avatar-wrap" ref={dropdownRef}>
                 <img
@@ -564,7 +595,6 @@ const Navbar = () => {
               </button>
             )}
 
-            {/* HAMBURGER */}
             <button
               className={`nb-hamburger${mobileOpen ? ' open' : ''}`}
               onClick={() => setMobileOpen(!mobileOpen)}
@@ -577,7 +607,6 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* MOBILE MENU */}
         {mobileOpen && (
           <div className="nb-mobile">
             {NAV_LINKS.map((link) => (
@@ -605,4 +634,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default Navbar

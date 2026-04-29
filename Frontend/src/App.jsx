@@ -21,7 +21,7 @@ function App() {
   return (
     <div className="min-h-screen transition-colors duration-300">
       <Navbar />
-      <div className={isFullWidth ? 'w-full' : 'mx-auto max-w-screen-xl px-2 sm:px-8 lg:px-0'}>
+      {/* <div className={isFullWidth ? 'w-full' : 'mx-auto max-w-screen-xl px-2 sm:px-8 lg:px-0'}> */}
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/doctors' element={<Doctors />} />
@@ -33,7 +33,7 @@ function App() {
           <Route path='/my-appointment' element={<MyAppointment />} />
           <Route path='/appointment/:docId' element={<Appointment />} />
         </Routes>
-      </div>
+      {/* </div> */}
       <Footer />
     </div>
   )
