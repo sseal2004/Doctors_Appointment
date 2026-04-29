@@ -1,7 +1,10 @@
 import React, { useState } from 'react'
 import { assets } from '../../assets/assets'
+import { useNavigate } from 'react-router-dom'
 
 const Contact = () => {
+    const navigate = useNavigate()
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -458,7 +461,12 @@ const Contact = () => {
                     <div className="cr-careers-title">Careers at MedCare</div>
                     <div className="cr-careers-sub">Join our team — explore open roles across engineering, care, and operations.</div>
                   </div>
-                  <button className="cr-careers-btn">Explore Jobs →</button>
+                  <button 
+                  className="cr-careers-btn" 
+                  onClick={() => window.open("http://localhost:5174/", "_blank")}
+                  >
+                  Explore Jobs →
+                </button>
                 </div>
               </div>
 

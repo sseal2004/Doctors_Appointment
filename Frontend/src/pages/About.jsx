@@ -1,7 +1,11 @@
 import React from 'react'
 import { assets } from '../../assets/assets'
+import { useNavigate } from 'react-router-dom'
+
 
 const About = () => {
+    const navigate = useNavigate()
+  
   const features = [
     {
       title: 'Efficiency',
@@ -278,7 +282,7 @@ const About = () => {
                 <div className="ab-cta-pill"><span className="ab-pdot" style={{ background: '#818CF8', boxShadow: 'none' }} />Built for Patients</div>
                 <h3 className="ab-cta-h3">Book smarter.<br /><em>Feel better.</em></h3>
                 <p className="ab-cta-sub">Every part of the experience is designed to reduce friction, save time, and make healthcare access feel effortless.</p>
-                <button className="ab-cta-btn">
+                <button className="ab-cta-btn" onClick={() => navigate('/doctors')}>
                   <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
