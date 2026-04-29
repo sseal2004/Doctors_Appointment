@@ -68,15 +68,77 @@ const TopDoctors = () => {
           55%,100% { left: 140%; }
         }
 
+        /* ── ECG ANIMATIONS ── */
+        /* Main ECG line traveling across */
+        @keyframes ecg-travel {
+          0%   { stroke-dashoffset: 2400; opacity: 0; }
+          5%   { opacity: 1; }
+          90%  { opacity: 1; }
+          100% { stroke-dashoffset: 0; opacity: 0; }
+        }
+        @keyframes ecg-travel-2 {
+          0%   { stroke-dashoffset: 2400; opacity: 0; }
+          5%   { opacity: 0.7; }
+          90%  { opacity: 0.7; }
+          100% { stroke-dashoffset: 0; opacity: 0; }
+        }
+        @keyframes ecg-travel-3 {
+          0%   { stroke-dashoffset: 2400; opacity: 0; }
+          5%   { opacity: 0.4; }
+          90%  { opacity: 0.4; }
+          100% { stroke-dashoffset: 0; opacity: 0; }
+        }
+        /* Glowing dot that runs along the ECG line */
+        @keyframes ecg-dot-run {
+          0%   { offset-distance: 0%;   opacity: 0; }
+          3%   { opacity: 1; }
+          95%  { opacity: 1; }
+          100% { offset-distance: 100%; opacity: 0; }
+        }
+        /* Pulse ripple from the spike peak */
+        @keyframes ecg-ripple {
+          0%   { r: 3;  opacity: 0.8; }
+          100% { r: 22; opacity: 0; }
+        }
+        @keyframes ecg-ripple2 {
+          0%   { r: 2;  opacity: 0.6; }
+          100% { r: 16; opacity: 0; }
+        }
+        /* Heartbeat icon pulse */
+        @keyframes hb-pulse {
+          0%,100% { transform: scale(1);   opacity: 0.18; }
+          15%     { transform: scale(1.22); opacity: 0.32; }
+          30%     { transform: scale(0.96); opacity: 0.18; }
+          45%     { transform: scale(1.12); opacity: 0.26; }
+          60%     { transform: scale(1);   opacity: 0.18; }
+        }
+        @keyframes hb-pulse-2 {
+          0%,100% { transform: scale(1);   opacity: 0.12; }
+          15%     { transform: scale(1.18); opacity: 0.22; }
+          30%     { transform: scale(0.97); opacity: 0.12; }
+          45%     { transform: scale(1.09); opacity: 0.18; }
+          60%     { transform: scale(1);   opacity: 0.12; }
+        }
+        /* Grid fade in */
+        @keyframes ecg-fade-in {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+        /* Vertical scan bar */
+        @keyframes ecg-scan-bar {
+          0%   { left: -8%; opacity: 0; }
+          5%   { opacity: 1; }
+          90%  { opacity: 0.8; }
+          100% { left: 108%;  opacity: 0; }
+        }
+
         /* ── ROOT ── */
         .td-root {
           font-family: 'Plus Jakarta Sans', sans-serif;
           position: relative;
-          padding: 88px 0 80px;
+          padding: 30px 0 10px;
           overflow: hidden;
           isolation: isolate;
-
-          /* MESH GRADIENT — light blue palette */
           background:
             radial-gradient(ellipse 70% 60% at 5% 10%,  rgba(99,102,241,0.10) 0%, transparent 60%),
             radial-gradient(ellipse 60% 55% at 95% 90%,  rgba(59,130,246,0.12) 0%, transparent 60%),
@@ -95,6 +157,88 @@ const TopDoctors = () => {
             linear-gradient(rgba(99,102,241,0.04) 1px, transparent 1px),
             linear-gradient(90deg, rgba(99,102,241,0.04) 1px, transparent 1px);
           background-size: 48px 48px;
+        }
+
+        /* ── ECG CANVAS LAYER ── */
+        .td-ecg-layer {
+          position: absolute; inset: 0; z-index: 2; pointer-events: none;
+          overflow: hidden;
+        }
+
+        .td-ecg-svg {
+          position: absolute; width: 100%; height: 100%;
+          animation: ecg-fade-in 1.2s ease both;
+        }
+
+        /* ECG lines */
+        .ecg-line-1 {
+          stroke-dasharray: 2400;
+          stroke-dashoffset: 2400;
+          animation: ecg-travel 7s cubic-bezier(0.4,0,0.6,1) infinite;
+        }
+        .ecg-line-2 {
+          stroke-dasharray: 2400;
+          stroke-dashoffset: 2400;
+          animation: ecg-travel-2 7s cubic-bezier(0.4,0,0.6,1) 3.5s infinite;
+        }
+        .ecg-line-3 {
+          stroke-dasharray: 2400;
+          stroke-dashoffset: 2400;
+          animation: ecg-travel-3 9s cubic-bezier(0.4,0,0.6,1) 1.5s infinite;
+        }
+        .ecg-line-4 {
+          stroke-dasharray: 2400;
+          stroke-dashoffset: 2400;
+          animation: ecg-travel-2 9s cubic-bezier(0.4,0,0.6,1) 5s infinite;
+        }
+        .ecg-line-5 {
+          stroke-dasharray: 2400;
+          stroke-dashoffset: 2400;
+          animation: ecg-travel-3 11s cubic-bezier(0.4,0,0.6,1) 2.8s infinite;
+        }
+
+        /* Ripple circles at spike peaks */
+        .ecg-ripple-1 { animation: ecg-ripple  1.4s ease-out 1.4s infinite; }
+        .ecg-ripple-2 { animation: ecg-ripple2 1.4s ease-out 1.55s infinite; }
+        .ecg-ripple-3 { animation: ecg-ripple  1.4s ease-out 4.9s infinite; }
+        .ecg-ripple-4 { animation: ecg-ripple2 1.4s ease-out 5.05s infinite; }
+        .ecg-ripple-5 { animation: ecg-ripple  1.4s ease-out 3.2s infinite; }
+        .ecg-ripple-6 { animation: ecg-ripple2 1.4s ease-out 3.35s infinite; }
+
+        /* Vertical scan bar */
+        .td-ecg-scanbar {
+          position: absolute; top: 0; bottom: 0; width: 8px;
+          background: linear-gradient(90deg,
+            transparent,
+            rgba(99,102,241,0.18) 30%,
+            rgba(255,255,255,0.55) 50%,
+            rgba(99,102,241,0.18) 70%,
+            transparent
+          );
+          animation: ecg-scan-bar 7s cubic-bezier(0.4,0,0.6,1) infinite;
+          pointer-events: none;
+        }
+        .td-ecg-scanbar-2 {
+          position: absolute; top: 0; bottom: 0; width: 8px;
+          background: linear-gradient(90deg,
+            transparent,
+            rgba(59,130,246,0.12) 30%,
+            rgba(255,255,255,0.35) 50%,
+            rgba(59,130,246,0.12) 70%,
+            transparent
+          );
+          animation: ecg-scan-bar 9s cubic-bezier(0.4,0,0.6,1) 4s infinite;
+          pointer-events: none;
+        }
+
+        /* Heart icon watermarks */
+        .td-heart-bg {
+          position: absolute; pointer-events: none;
+          animation: hb-pulse 1.2s ease-in-out infinite;
+        }
+        .td-heart-bg-2 {
+          position: absolute; pointer-events: none;
+          animation: hb-pulse-2 1.2s ease-in-out 0.6s infinite;
         }
 
         /* FLOATING ORBS */
@@ -156,9 +300,9 @@ const TopDoctors = () => {
         /* ── HEADING ── */
         .td-head {
           text-align: center;
-          margin-bottom: 52px;
+          margin-bottom: 22px;
           position: relative; z-index: 10;
-          padding: 0 24px;
+          padding: 0 14px;
           animation: td-slide-up 0.7s ease both;
         }
 
@@ -293,7 +437,6 @@ const TopDoctors = () => {
         .td-card:nth-child(9)  { animation: td-card-in 0.5s 0.45s ease both; }
         .td-card:nth-child(10) { animation: td-card-in 0.5s 0.50s ease both; }
 
-        /* shimmer sweep on hover */
         .td-card::before {
           content: '';
           position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
@@ -302,7 +445,6 @@ const TopDoctors = () => {
         }
         .td-card:hover::before { animation: td-shine-sweep 0.55s ease forwards; }
 
-        /* gradient overlay */
         .td-card::after {
           content: ''; position: absolute; inset: 0; z-index: 4;
           background: linear-gradient(160deg, rgba(99,102,241,0.04), rgba(59,130,246,0.03));
@@ -316,7 +458,6 @@ const TopDoctors = () => {
           background: rgba(255,255,255,0.97);
         }
 
-        /* IMAGE */
         .td-img-wrap {
           height: 186px;
           overflow: hidden; position: relative;
@@ -330,14 +471,12 @@ const TopDoctors = () => {
         }
         .td-card:hover .td-img-wrap img { transform: scale(1.06); }
 
-        /* image gradient overlay */
         .td-img-overlay {
           position: absolute; inset: 0;
           background: linear-gradient(to bottom, transparent 50%, rgba(15,23,42,0.08) 100%);
           pointer-events: none;
         }
 
-        /* AVAILABILITY BADGE */
         .td-avail {
           position: absolute; top: 10px; right: 10px;
           background: rgba(255,255,255,0.93);
@@ -354,7 +493,6 @@ const TopDoctors = () => {
         .dot-on  { background: #10b981; animation: td-avail-pulse 2s ease-in-out infinite; }
         .dot-off { background: #cbd5e1; }
 
-        /* INFO */
         .td-info { padding: 15px 16px 16px; position: relative; z-index: 3; }
 
         .td-spec {
@@ -387,7 +525,6 @@ const TopDoctors = () => {
           border: 1px solid rgba(99,102,241,0.18);
         }
 
-        /* BOOK BTN — appears on hover */
         .td-book-btn {
           display: flex; align-items: center; justify-content: center; gap: 5px;
           width: 100%; margin-top: 10px; padding: 9px;
@@ -459,6 +596,317 @@ const TopDoctors = () => {
       `}</style>
 
       <div className="td-root">
+        {/* ── ECG BACKGROUND LAYER ── */}
+        <div className="td-ecg-layer">
+
+          {/* Heart icon watermarks */}
+          <svg className="td-heart-bg" style={{ width: 320, height: 320, top: '8%', left: '6%', opacity: 0.18 }} viewBox="0 0 100 100" fill="none">
+            <path d="M50 85 C50 85 10 58 10 32 C10 20 20 12 32 16 C40 19 46 26 50 32 C54 26 60 19 68 16 C80 12 90 20 90 32 C90 58 50 85 50 85Z" fill="url(#hg1)" />
+            <defs>
+              <linearGradient id="hg1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#6366f1" />
+                <stop offset="100%" stopColor="#3b82f6" />
+              </linearGradient>
+            </defs>
+          </svg>
+
+          <svg className="td-heart-bg-2" style={{ width: 200, height: 200, bottom: '10%', right: '8%', opacity: 0.12 }} viewBox="0 0 100 100" fill="none">
+            <path d="M50 85 C50 85 10 58 10 32 C10 20 20 12 32 16 C40 19 46 26 50 32 C54 26 60 19 68 16 C80 12 90 20 90 32 C90 58 50 85 50 85Z" fill="url(#hg2)" />
+            <defs>
+              <linearGradient id="hg2" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#06b6d4" />
+                <stop offset="100%" stopColor="#6366f1" />
+              </linearGradient>
+            </defs>
+          </svg>
+
+          {/* Vertical scan bars */}
+          <div className="td-ecg-scanbar" />
+          <div className="td-ecg-scanbar-2" />
+
+          {/* Main SVG with ECG lines */}
+          <svg
+            className="td-ecg-svg"
+            viewBox="0 0 1400 800"
+            preserveAspectRatio="xMidYMid slice"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <defs>
+              {/* Main ECG glow filter */}
+              <filter id="ecg-glow-main" x="-20%" y="-100%" width="140%" height="300%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+              </filter>
+              <filter id="ecg-glow-soft" x="-20%" y="-100%" width="140%" height="300%">
+                <feGaussianBlur stdDeviation="5" result="blur" />
+                <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+              </filter>
+              <filter id="ecg-glow-strong" x="-30%" y="-150%" width="160%" height="400%">
+                <feGaussianBlur stdDeviation="8" result="blur1" />
+                <feGaussianBlur stdDeviation="2" result="blur2" in="SourceGraphic" />
+                <feMerge><feMergeNode in="blur1" /><feMergeNode in="blur2" /><feMergeNode in="SourceGraphic" /></feMerge>
+              </filter>
+
+              {/* Gradients for lines */}
+              <linearGradient id="ecg-grad-1" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%"   stopColor="rgba(99,102,241,0)" />
+                <stop offset="20%"  stopColor="rgba(99,102,241,0.7)" />
+                <stop offset="50%"  stopColor="rgba(139,92,246,0.9)" />
+                <stop offset="80%"  stopColor="rgba(59,130,246,0.7)" />
+                <stop offset="100%" stopColor="rgba(59,130,246,0)" />
+              </linearGradient>
+              <linearGradient id="ecg-grad-2" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%"   stopColor="rgba(59,130,246,0)" />
+                <stop offset="25%"  stopColor="rgba(6,182,212,0.5)" />
+                <stop offset="55%"  stopColor="rgba(59,130,246,0.7)" />
+                <stop offset="85%"  stopColor="rgba(99,102,241,0.5)" />
+                <stop offset="100%" stopColor="rgba(99,102,241,0)" />
+              </linearGradient>
+              <linearGradient id="ecg-grad-3" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%"   stopColor="rgba(139,92,246,0)" />
+                <stop offset="30%"  stopColor="rgba(99,102,241,0.35)" />
+                <stop offset="60%"  stopColor="rgba(59,130,246,0.45)" />
+                <stop offset="100%" stopColor="rgba(6,182,212,0)" />
+              </linearGradient>
+            </defs>
+
+            {/* ── ECG LINE 1 — primary, top row ── */}
+            {/*
+              ECG path pattern: flat baseline → small bump → flat → sharp rise (P) →
+              drop to baseline → sharp tall spike (QRS) → deep dip (S) → rise back →
+              hump (T) → flat baseline … repeating
+            */}
+            <path
+              className="ecg-line-1"
+              d="
+                M-200,200
+                L80,200
+                Q90,200 95,196 Q100,192 105,200
+                L170,200
+                Q175,200 178,188 Q181,176 184,200
+                L200,200
+                L210,120 L215,240 L220,165 L225,200
+                L270,200
+                Q280,200 285,188 Q290,176 295,200
+                L360,200
+                Q365,200 368,190 Q371,180 374,200
+                L440,200
+                L450,125 L455,245 L460,168 L465,200
+                L520,200
+                Q528,200 532,190 Q536,180 540,200
+                L610,200
+                Q618,200 622,192 Q626,184 630,200
+                L700,200
+                L710,122 L715,242 L720,166 L725,200
+                L790,200
+                Q797,200 801,190 Q805,180 809,200
+                L880,200
+                L890,126 L895,244 L900,168 L905,200
+                L970,200
+                Q977,200 981,190 Q985,180 989,200
+                L1060,200
+                L1070,120 L1075,242 L1080,165 L1085,200
+                L1150,200
+                Q1157,200 1161,190 Q1165,180 1169,200
+                L1240,200
+                L1250,124 L1255,244 L1260,167 L1265,200
+                L1350,200
+                L1600,200
+              "
+              fill="none"
+              stroke="url(#ecg-grad-1)"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              filter="url(#ecg-glow-main)"
+            />
+
+            {/* ── ECG LINE 1 GLOW COPY (thicker, blurred) ── */}
+            <path
+              className="ecg-line-1"
+              d="
+                M-200,200
+                L80,200
+                Q90,200 95,196 Q100,192 105,200
+                L170,200
+                Q175,200 178,188 Q181,176 184,200
+                L200,200
+                L210,120 L215,240 L220,165 L225,200
+                L270,200
+                Q280,200 285,188 Q290,176 295,200
+                L360,200
+                Q365,200 368,190 Q371,180 374,200
+                L440,200
+                L450,125 L455,245 L460,168 L465,200
+                L520,200
+                Q528,200 532,190 Q536,180 540,200
+                L610,200
+                Q618,200 622,192 Q626,184 630,200
+                L700,200
+                L710,122 L715,242 L720,166 L725,200
+                L790,200
+                Q797,200 801,190 Q805,180 809,200
+                L880,200
+                L890,126 L895,244 L900,168 L905,200
+                L970,200
+                Q977,200 981,190 Q985,180 989,200
+                L1060,200
+                L1070,120 L1075,242 L1080,165 L1085,200
+                L1150,200
+                Q1157,200 1161,190 Q1165,180 1169,200
+                L1240,200
+                L1250,124 L1255,244 L1260,167 L1265,200
+                L1350,200
+                L1600,200
+              "
+              fill="none"
+              stroke="rgba(99,102,241,0.25)"
+              strokeWidth="7"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              filter="url(#ecg-glow-strong)"
+            />
+
+            {/* Ripple at spike peaks for line 1 */}
+            <circle className="ecg-ripple-1" cx="215" cy="200" r="3" fill="none" stroke="rgba(99,102,241,0.6)" strokeWidth="1.5" />
+            <circle className="ecg-ripple-2" cx="215" cy="200" r="2" fill="none" stroke="rgba(139,92,246,0.4)" strokeWidth="1" />
+
+            {/* ── ECG LINE 2 — second row, delayed ── */}
+            <path
+              className="ecg-line-2"
+              d="
+                M-200,420
+                L60,420
+                Q68,420 72,412 Q76,404 80,420
+                L150,420
+                L160,345 L165,460 L170,380 L175,420
+                L240,420
+                Q248,420 252,410 Q256,400 260,420
+                L330,420
+                Q337,420 341,412 Q345,404 349,420
+                L420,420
+                L430,342 L435,462 L440,378 L445,420
+                L510,420
+                Q517,420 521,410 Q525,400 529,420
+                L600,420
+                L610,344 L615,462 L620,380 L625,420
+                L695,420
+                Q702,420 706,412 Q710,404 714,420
+                L785,420
+                L795,340 L800,462 L805,376 L810,420
+                L880,420
+                Q887,420 891,410 Q895,400 899,420
+                L970,420
+                L980,343 L985,462 L990,379 L995,420
+                L1065,420
+                Q1072,420 1076,412 Q1080,404 1084,420
+                L1155,420
+                L1165,342 L1170,462 L1175,378 L1180,420
+                L1260,420
+                L1600,420
+              "
+              fill="none"
+              stroke="url(#ecg-grad-2)"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              filter="url(#ecg-glow-soft)"
+            />
+            {/* Glow copy for line 2 */}
+            <path
+              className="ecg-line-2"
+              d="
+                M-200,420
+                L60,420
+                Q68,420 72,412 Q76,404 80,420
+                L150,420
+                L160,345 L165,460 L170,380 L175,420
+                L240,420
+                Q248,420 252,410 Q256,400 260,420
+                L330,420
+                Q337,420 341,412 Q345,404 349,420
+                L420,420
+                L430,342 L435,462 L440,378 L445,420
+                L510,420
+                Q517,420 521,410 Q525,400 529,420
+                L600,420
+                L610,344 L615,462 L620,380 L625,420
+                L695,420
+                Q702,420 706,412 Q710,404 714,420
+                L785,420
+                L795,340 L800,462 L805,376 L810,420
+                L880,420
+                Q887,420 891,410 Q895,400 899,420
+                L970,420
+                L980,343 L985,462 L990,379 L995,420
+                L1065,420
+                Q1072,420 1076,412 Q1080,404 1084,420
+                L1155,420
+                L1165,342 L1170,462 L1175,378 L1180,420
+                L1260,420
+                L1600,420
+              "
+              fill="none"
+              stroke="rgba(59,130,246,0.18)"
+              strokeWidth="8"
+              strokeLinecap="round"
+              filter="url(#ecg-glow-strong)"
+            />
+
+            <circle className="ecg-ripple-3" cx="165" cy="420" r="3" fill="none" stroke="rgba(59,130,246,0.55)" strokeWidth="1.5" />
+            <circle className="ecg-ripple-4" cx="165" cy="420" r="2" fill="none" stroke="rgba(6,182,212,0.35)" strokeWidth="1" />
+
+            {/* ── ECG LINE 3 — subtle, bottom band ── */}
+            <path
+              className="ecg-line-3"
+              d="
+                M-200,630
+                L40,630
+                Q47,630 51,622 Q55,614 59,630
+                L130,630
+                L140,560 L145,672 L150,592 L155,630
+                L225,630
+                Q232,630 236,620 Q240,610 244,630
+                L315,630
+                L325,558 L330,673 L335,590 L340,630
+                L415,630
+                Q422,630 426,620 Q430,610 434,630
+                L510,630
+                L520,556 L525,673 L530,590 L535,630
+                L610,630
+                Q617,630 621,620 Q625,610 629,630
+                L705,630
+                L715,558 L720,673 L725,592 L730,630
+                L810,630
+                Q817,630 821,620 Q825,610 829,630
+                L905,630
+                L915,557 L920,673 L925,591 L930,630
+                L1010,630
+                Q1017,630 1021,620 Q1025,610 1029,630
+                L1110,630
+                L1120,558 L1125,673 L1130,590 L1135,630
+                L1230,630
+                L1600,630
+              "
+              fill="none"
+              stroke="url(#ecg-grad-3)"
+              strokeWidth="1.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              filter="url(#ecg-glow-soft)"
+            />
+
+            <circle className="ecg-ripple-5" cx="145" cy="630" r="3" fill="none" stroke="rgba(139,92,246,0.5)" strokeWidth="1.5" />
+            <circle className="ecg-ripple-6" cx="145" cy="630" r="2" fill="none" stroke="rgba(99,102,241,0.3)" strokeWidth="1" />
+
+            {/* ── HORIZONTAL GUIDE LINES (subtle medical monitor look) ── */}
+            <line x1="0" y1="200" x2="1400" y2="200" stroke="rgba(99,102,241,0.06)" strokeWidth="1" strokeDasharray="4 8" />
+            <line x1="0" y1="420" x2="1400" y2="420" stroke="rgba(59,130,246,0.05)" strokeWidth="1" strokeDasharray="4 8" />
+            <line x1="0" y1="630" x2="1400" y2="630" stroke="rgba(139,92,246,0.04)" strokeWidth="1" strokeDasharray="4 8" />
+
+          </svg>
+        </div>
+
         {/* depth layers */}
         <div className="td-orb td-orb-1" />
         <div className="td-orb td-orb-2" />
@@ -469,7 +917,7 @@ const TopDoctors = () => {
 
         {/* HEADING */}
         <div className="td-head">
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
             <div className="td-eyebrow">
               <span className="td-eye-dot" />
               <span className="td-eye-txt">Hand-picked for you</span>
@@ -477,31 +925,6 @@ const TopDoctors = () => {
           </div>
           <h2 className="td-title">Top <em>Doctors</em> to Book</h2>
           <p className="td-sub">Verified, board-certified specialists ready to see you today.</p>
-        </div>
-
-        {/* GLASS STAT CARDS */}
-        <div className="td-stats">
-          <div className="td-stat-card">
-            <div className="td-stat-icon a">🩺</div>
-            <div>
-              <div className="td-stat-num">100<span>+</span></div>
-              <div className="td-stat-lbl">Top Doctors</div>
-            </div>
-          </div>
-          <div className="td-stat-card">
-            <div className="td-stat-icon b">📅</div>
-            <div>
-              <div className="td-stat-num">50K<span>+</span></div>
-              <div className="td-stat-lbl">Appointments</div>
-            </div>
-          </div>
-          <div className="td-stat-card">
-            <div className="td-stat-icon c">⭐</div>
-            <div>
-              <div className="td-stat-num">4.9<span>/5</span></div>
-              <div className="td-stat-lbl">Avg. Rating</div>
-            </div>
-          </div>
         </div>
 
         {/* DOCTOR GRID */}

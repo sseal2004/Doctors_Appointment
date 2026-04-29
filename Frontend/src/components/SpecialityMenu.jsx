@@ -110,7 +110,7 @@ const SpecialityMenu = () => {
 
         /* ─── HEADING ─── */
         .sm-head {
-          position:relative; z-index:10; margin-bottom:22px;
+          position:relative; z-index:10; margin-bottom:2px;
           animation:sm-slide-up 0.7s ease both;
         }
         .sm-eyebrow {
