@@ -26,7 +26,7 @@ const Contact = () => {
         /* ── HERO ── */
         .cr-hero {
           background: #060912;
-          padding: 80px 0 72px;
+          padding: 9px 0 8x;
           position: relative;
           overflow: hidden;
           text-align: center;
@@ -35,9 +35,9 @@ const Contact = () => {
         .cr-hero::before {
           content: '';
           position: absolute;
-          top: -160px; left: 50%;
+          top: -10px; left: 50%;
           transform: translateX(-50%);
-          width: 700px; height: 700px;
+          width: 500px; height: 500px;
           border-radius: 50%;
           background: radial-gradient(circle, rgba(59,130,246,0.14) 0%, transparent 65%);
           pointer-events: none;
@@ -50,7 +50,7 @@ const Contact = () => {
           background-image:
             linear-gradient(rgba(59,130,246,0.04) 1px, transparent 1px),
             linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px);
-          background-size: 48px 48px;
+          background-size: 28px 28px;
           pointer-events: none;
         }
 
@@ -129,7 +129,7 @@ const Contact = () => {
         }
 
         /* ── BODY ── */
-        .cr-body { padding: 64px 0 80px; }
+        .cr-body { padding: 24px 0 30px; }
         .cr-wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
 
         .cr-grid {
