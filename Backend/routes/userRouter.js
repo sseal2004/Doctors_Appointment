@@ -1,5 +1,17 @@
 import express from 'express';
-import { registerUser, loginUser, getProfile, updateProfile, bookAppointment, listAppointment, cancelAppointment, paymentRazorpay, verifyRazorpay } from '../controllers/userController.js';
+import {
+    registerUser,
+    loginUser,
+    getProfile,
+    updateProfile,
+    bookAppointment,
+    listAppointment,
+    cancelAppointment,
+    paymentPaypal,
+    verifyPaypal,
+    paymentUpi,
+    verifyUpi
+} from '../controllers/userController.js';
 import authUser from '../middlewares/authUser.js';
 import upload from '../middlewares/multer.js';
 
@@ -12,13 +24,13 @@ userRouter.post("/update-profile", upload.single('image'), authUser, updateProfi
 userRouter.post("/book-appointment", authUser, bookAppointment)
 userRouter.get("/appointments", authUser, listAppointment)
 userRouter.post("/cancel-appointment", authUser, cancelAppointment)
-userRouter.post("/payment-razorpay", authUser, paymentRazorpay)
-userRouter.post("/verifyRazorpay", authUser, verifyRazorpay)
 
+// PayPal
+userRouter.post("/payment-paypal", authUser, paymentPaypal)
+userRouter.post("/verifyPaypal", authUser, verifyPaypal)
 
- 
-
-
-
+// UPI / QR Code
+userRouter.post("/payment-upi", authUser, paymentUpi)
+userRouter.post("/verifyUpi", authUser, verifyUpi)
 
 export default userRouter;
