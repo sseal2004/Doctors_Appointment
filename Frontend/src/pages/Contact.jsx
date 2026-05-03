@@ -48,7 +48,7 @@ const Contact = () => {
         /* ── HERO ── */
         .cr-hero {
           background: #060912;
-          padding: 90px 0 80px;
+          padding: 10px 0 5px;
           position: relative;
           overflow: hidden;
           text-align: center;
