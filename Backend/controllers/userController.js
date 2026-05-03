@@ -6,7 +6,7 @@ import appointmentModel from "../models/appointmentModel.js";
 import jwt from "jsonwebtoken";
 import {v2 as cloudinary} from 'cloudinary'
 import paypal from '@paypal/checkout-server-sdk';
-
+import contactModel from '../models/contactModel.js';
 
 // PayPal client setup
 const paypalEnv = new paypal.core.SandboxEnvironment(
@@ -90,6 +90,90 @@ const updateProfile = async (req, res) => {
             await userModel.findByIdAndUpdate(userId, { image: imageURL })
         }
         res.json({ success: true, message: 'Profile Updated' })
+    } catch (error) {
+        console.log(error)
+        res.json({ success: false, message: error.message })
+    }
+}
+
+// API to handle contact form submission
+const sendContactMessage = async (req, res) => {
+    try {
+        const { name, email, subject, message } = req.body
+
+        if (!name || !email || !subject || !message) {
+            return res.json({ success: false, message: 'All fields are required' })
+        }
+        if (!validator.isEmail(email)) {
+            return res.json({ success: false, message: 'Please enter a valid email address' })
+        }
+        if (message.trim().length < 10) {
+            return res.json({ success: false, message: 'Message must be at least 10 characters' })
+        }
+
+        const newContact = new contactModel({
+            name: name.trim(),
+            email: email.trim().toLowerCase(),
+            subject: subject.trim(),
+            message: message.trim(),
+            createdAt: new Date()
+        })
+
+        await newContact.save()
+        console.log('Contact form saved:', { name, email, subject })
+        res.json({ success: true, message: 'Message received! We will get back to you within 2 hours.' })
+
+    } catch (error) {
+        console.log(error)
+        res.json({ success: false, message: error.message })
+    }
+}
+
+// API to get all contact messages (admin only, validated via aToken in header)
+const getAllContacts = async (req, res) => {
+    try {
+        const contacts = await contactModel.find({}).sort({ createdAt: -1 })
+        res.json({ success: true, contacts })
+    } catch (error) {
+        console.log(error)
+        res.json({ success: false, message: error.message })
+    }
+}
+
+// API to mark a contact message as read
+const markContactRead = async (req, res) => {
+    try {
+        const { contactId } = req.body
+        if (!contactId) {
+            return res.json({ success: false, message: 'Contact ID is required' })
+        }
+        const contact = await contactModel.findByIdAndUpdate(
+            contactId,
+            { read: true },
+            { new: true }
+        )
+        if (!contact) {
+            return res.json({ success: false, message: 'Contact not found' })
+        }
+        res.json({ success: true, message: 'Marked as read' })
+    } catch (error) {
+        console.log(error)
+        res.json({ success: false, message: error.message })
+    }
+}
+
+// API to delete a contact message
+const deleteContact = async (req, res) => {
+    try {
+        const { contactId } = req.body
+        if (!contactId) {
+            return res.json({ success: false, message: 'Contact ID is required' })
+        }
+        const contact = await contactModel.findByIdAndDelete(contactId)
+        if (!contact) {
+            return res.json({ success: false, message: 'Contact not found' })
+        }
+        res.json({ success: true, message: 'Contact deleted successfully' })
     } catch (error) {
         console.log(error)
         res.json({ success: false, message: error.message })
@@ -227,7 +311,6 @@ const verifyPaypal = async (req, res) => {
 // UPI / QR CODE
 // ─────────────────────────────────────────────
 
-// API to generate UPI payment link for QR code
 const paymentUpi = async (req, res) => {
     try {
         const { appointmentId } = req.body
@@ -237,12 +320,10 @@ const paymentUpi = async (req, res) => {
             return res.json({ success: false, message: 'Appointment Cancelled or not found' })
         }
 
-        const upiId   = process.env.UPI_ID           // e.g. yourname@upi
-        const upiName = process.env.UPI_NAME          // e.g. Prescripto Clinic
+        const upiId   = process.env.UPI_ID
+        const upiName = process.env.UPI_NAME
         const amount  = Number(appointmentData.amount).toFixed(2)
 
-        // Standard UPI deep-link — scannable by PhonePe, GPay, Paytm, etc.
-        // tr (transaction ref) carries appointmentId so you can match it in your records
         const upiLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(upiName)}&am=${amount}&cu=INR&tn=${encodeURIComponent('Appointment-' + appointmentId)}&tr=${appointmentId}`
 
         res.json({ success: true, upiLink, amount, appointmentId })
@@ -253,8 +334,6 @@ const paymentUpi = async (req, res) => {
     }
 }
 
-// API called when user clicks "I've Paid" after scanning the QR
-// In production: replace the direct payment:true with a UPI webhook / status-poll check
 const verifyUpi = async (req, res) => {
     try {
         const { appointmentId } = req.body
@@ -268,7 +347,6 @@ const verifyUpi = async (req, res) => {
         }
 
         await appointmentModel.findByIdAndUpdate(appointmentId, { payment: true })
-
         res.json({ success: true, message: 'Payment marked as received. Thank you!' })
 
     } catch (error) {
@@ -289,5 +367,9 @@ export {
     paymentPaypal,
     verifyPaypal,
     paymentUpi,
-    verifyUpi
+    verifyUpi,
+    sendContactMessage,
+    getAllContacts,
+    markContactRead,
+    deleteContact,
 }

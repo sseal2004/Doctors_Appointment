@@ -11,6 +11,8 @@ const Login = () => {
   const [state, setState] = useState('Admin')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [errorMsg, setErrorMsg] = useState('')
+  const [errorKey, setErrorKey] = useState(0)
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL
   const { setDToken } = useContext(DoctorContext)
@@ -18,22 +20,34 @@ const Login = () => {
 
   const onSubmitHandler = async (event) => {
     event.preventDefault()
-    if (state === 'Admin') {
-      const { data } = await axios.post(backendUrl + '/api/admin/login', { email, password })
-      if (data.success) {
-        setAToken(data.token)
-        localStorage.setItem('aToken', data.token)
+    setErrorMsg('')
+    try {
+      if (state === 'Admin') {
+        const { data } = await axios.post(backendUrl + '/api/admin/login', { email, password })
+        if (data.success) {
+          setAToken(data.token)
+          localStorage.setItem('aToken', data.token)
+        } else {
+          setErrorMsg(data.message)
+          setErrorKey(k => k + 1)
+          toast.error(data.message)
+        }
       } else {
-        toast.error(data.message)
+        const { data } = await axios.post(backendUrl + '/api/doctor/login', { email, password })
+        if (data.success) {
+          setDToken(data.token)
+          localStorage.setItem('dToken', data.token)
+        } else {
+          setErrorMsg(data.message)
+          setErrorKey(k => k + 1)
+          toast.error(data.message)
+        }
       }
-    } else {
-      const { data } = await axios.post(backendUrl + '/api/doctor/login', { email, password })
-      if (data.success) {
-        setDToken(data.token)
-        localStorage.setItem('dToken', data.token)
-      } else {
-        toast.error(data.message)
-      }
+    } catch (err) {
+      const msg = err?.response?.data?.message || 'Something went wrong. Please try again.'
+      setErrorMsg(msg)
+      setErrorKey(k => k + 1)
+      toast.error(msg)
     }
   }
 
@@ -229,6 +243,44 @@ const Login = () => {
           box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
         }
 
+        /* Error message */
+        @keyframes al-error-in {
+          0%   { opacity: 0; transform: translateY(-6px) scale(0.98); }
+          60%  { transform: translateY(2px) scale(1.01); }
+          100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes al-shake {
+          0%, 100% { transform: translateX(0); }
+          20%       { transform: translateX(-5px); }
+          40%       { transform: translateX(5px); }
+          60%       { transform: translateX(-4px); }
+          80%       { transform: translateX(4px); }
+        }
+        .al-error {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          background: rgba(239, 68, 68, 0.06);
+          border: 1px solid rgba(239, 68, 68, 0.25);
+          border-left: 3px solid #EF4444;
+          border-radius: 10px;
+          padding: 11px 14px;
+          margin-top: 14px;
+          font-size: 13px;
+          font-weight: 500;
+          color: #DC2626;
+          font-family: 'Sora', sans-serif;
+          line-height: 1.5;
+          animation: al-error-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both,
+                     al-shake 0.4s ease 0.1s both;
+          transition: opacity 0.2s ease;
+        }
+        .al-error-icon {
+          flex-shrink: 0;
+          width: 16px; height: 16px;
+          color: #EF4444;
+        }
+
         /* Submit btn */
         .al-btn {
           width: 100%;
@@ -407,7 +459,7 @@ const Login = () => {
                 <button
                   type="button"
                   className={`al-tab ${state === 'Admin' ? 'al-tab-active' : ''}`}
-                  onClick={() => setState('Admin')}
+                  onClick={() => { setState('Admin'); setErrorMsg(''); setErrorKey(0) }}
                 >
                   <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
@@ -417,7 +469,7 @@ const Login = () => {
                 <button
                   type="button"
                   className={`al-tab ${state === 'Doctor' ? 'al-tab-active' : ''}`}
-                  onClick={() => setState('Doctor')}
+                  onClick={() => { setState('Doctor'); setErrorMsg(''); setErrorKey(0) }}
                 >
                   <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -439,7 +491,7 @@ const Login = () => {
                     type="email"
                     placeholder="admin@medcare.com"
                     value={email}
-                    onChange={e => setEmail(e.target.value)}
+                    onChange={e => { setEmail(e.target.value); setErrorMsg('') }}
                     required
                   />
                 </div>
@@ -458,11 +510,21 @@ const Login = () => {
                     type="password"
                     placeholder="Enter your password"
                     value={password}
-                    onChange={e => setPassword(e.target.value)}
+                    onChange={e => { setPassword(e.target.value); setErrorMsg('') }}
                     required
                   />
                 </div>
               </div>
+
+              {/* Animated Error Message — works for both Admin & Doctor */}
+              {errorMsg && (
+                <p className="al-error" key={errorKey}>
+                  <svg className="al-error-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                  </svg>
+                  {errorMsg}
+                </p>
+              )}
 
               <button type="submit" className="al-btn">
                 <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>

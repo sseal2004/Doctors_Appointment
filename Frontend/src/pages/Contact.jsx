@@ -1,9 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { assets } from '../../assets/assets'
 import { useNavigate } from 'react-router-dom'
+import { AppContext } from '../context/AppContext'
+import axios from 'axios'
 
 const Contact = () => {
-    const navigate = useNavigate()
+  const navigate = useNavigate()
+  const { backendUrl } = useContext(AppContext)
 
   const [formData, setFormData] = useState({
     name: '',
@@ -12,11 +15,27 @@ const Contact = () => {
     message: '',
   })
   const [sent, setSent] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    setSent(true)
-    setTimeout(() => setSent(false), 3000)
+    setError('')
+    setLoading(true)
+    try {
+      const { data } = await axios.post(backendUrl + '/api/user/contact', formData)
+      if (data.success) {
+        setSent(true)
+        setFormData({ name: '', email: '', subject: '', message: '' })
+        setTimeout(() => setSent(false), 3000)
+      } else {
+        setError(data.message || 'Something went wrong. Please try again.')
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || 'Network error. Please check your connection.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -29,7 +48,7 @@ const Contact = () => {
         /* ── HERO ── */
         .cr-hero {
           background: #060912;
-          padding: 9px 0 8x;
+          padding: 90px 0 80px;
           position: relative;
           overflow: hidden;
           text-align: center;
@@ -57,7 +76,6 @@ const Contact = () => {
           pointer-events: none;
         }
 
-        /* hero glow bottom edge */
         .cr-hero-fade {
           position: absolute;
           bottom: 0; left: 0; right: 0;
@@ -253,7 +271,6 @@ const Contact = () => {
           overflow: hidden;
         }
 
-        /* decorative top-right corner accent */
         .cr-form-card::before {
           content: '';
           position: absolute; top: 0; right: 0;
@@ -277,7 +294,6 @@ const Contact = () => {
           margin-bottom: 36px;
         }
 
-        /* divider line under heading */
         .cr-form-divider {
           height: 1px;
           background: linear-gradient(90deg, rgba(99,102,241,0.3), transparent);
@@ -316,6 +332,7 @@ const Contact = () => {
           font-family: 'Plus Jakarta Sans', sans-serif;
           outline: none;
           transition: all 0.2s;
+          box-sizing: border-box;
         }
 
         .cr-input::placeholder { color: #CBD5E1; }
@@ -331,6 +348,44 @@ const Contact = () => {
           padding-top: 13px; line-height: 1.65;
         }
 
+        /* ── ERROR BANNER ── */
+        .cr-error {
+          display: flex; align-items: flex-start; gap: 10px;
+          background: #FFF1F2;
+          border: 1.5px solid #FECDD3;
+          border-radius: 12px;
+          padding: 13px 16px;
+          margin-bottom: 20px;
+          animation: cr-error-in 0.3s ease;
+        }
+
+        @keyframes cr-error-in {
+          from { opacity: 0; transform: translateY(-8px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .cr-error-icon {
+          flex-shrink: 0; margin-top: 1px;
+          color: #F43F5E;
+        }
+
+        .cr-error-txt {
+          font-size: 13px; font-weight: 500;
+          color: #BE123C; line-height: 1.5;
+        }
+
+        .cr-error-close {
+          margin-left: auto; flex-shrink: 0;
+          background: none; border: none;
+          color: #FDA4AF; cursor: pointer;
+          padding: 0; line-height: 1;
+          font-size: 16px;
+          transition: color 0.2s;
+        }
+
+        .cr-error-close:hover { color: #F43F5E; }
+
+        /* ── SUBMIT BTN ── */
         .cr-submit {
           width: 100%;
           background: linear-gradient(135deg, #3B82F6 0%, #6366F1 100%);
@@ -346,15 +401,29 @@ const Contact = () => {
           margin-top: 8px;
         }
 
-        .cr-submit:hover {
+        .cr-submit:hover:not(:disabled) {
           transform: translateY(-2px);
           box-shadow: 0 14px 36px rgba(99,102,241,0.45);
+        }
+
+        .cr-submit:disabled {
+          opacity: 0.7; cursor: not-allowed;
         }
 
         .cr-submit.sent {
           background: linear-gradient(135deg, #10B981, #059669);
           box-shadow: 0 8px 24px rgba(16,185,129,0.3);
         }
+
+        .cr-spinner {
+          width: 16px; height: 16px; border-radius: 50%;
+          border: 2px solid rgba(255,255,255,0.3);
+          border-top-color: #fff;
+          animation: cr-spin 0.7s linear infinite;
+          flex-shrink: 0;
+        }
+
+        @keyframes cr-spin { to { transform: rotate(360deg); } }
 
         /* ── RESPONSIVE ── */
         @media (max-width: 1024px) {
@@ -461,12 +530,12 @@ const Contact = () => {
                     <div className="cr-careers-title">Careers at MedCare</div>
                     <div className="cr-careers-sub">Join our team — explore open roles across engineering, care, and operations.</div>
                   </div>
-                  <button 
-                  className="cr-careers-btn" 
-                  onClick={() => window.open("http://localhost:5174/", "_blank")}
+                  <button
+                    className="cr-careers-btn"
+                    onClick={() => window.open("http://localhost:5174/", "_blank")}
                   >
-                  Explore Jobs →
-                </button>
+                    Explore Jobs →
+                  </button>
                 </div>
               </div>
 
@@ -475,6 +544,19 @@ const Contact = () => {
                 <div className="cr-form-heading">Send us a <span>Message</span></div>
                 <p className="cr-form-sub">Fill out the form below and our team will get back to you within 2 hours.</p>
                 <div className="cr-form-divider" />
+
+                {/* ✅ ERROR BANNER */}
+                {error && (
+                  <div className="cr-error">
+                    <span className="cr-error-icon">
+                      <svg width="17" height="17" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                      </svg>
+                    </span>
+                    <span className="cr-error-txt">{error}</span>
+                    <button className="cr-error-close" onClick={() => setError('')}>✕</button>
+                  </div>
+                )}
 
                 <form onSubmit={handleSubmit}>
                   <div className="cr-form-row">
@@ -554,8 +636,13 @@ const Contact = () => {
                     </div>
                   </div>
 
-                  <button type="submit" className={`cr-submit${sent ? ' sent' : ''}`}>
-                    {sent ? (
+                  <button type="submit" className={`cr-submit${sent ? ' sent' : ''}`} disabled={loading}>
+                    {loading ? (
+                      <>
+                        <span className="cr-spinner" />
+                        Sending...
+                      </>
+                    ) : sent ? (
                       <>
                         <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
