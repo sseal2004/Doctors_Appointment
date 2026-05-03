@@ -575,7 +575,8 @@ const Appointment = () => {
                 <span className="ap-fee-emoji">💎</span>
                 <div>
                   <div className="ap-fee-lbl">Consultation Fee</div>
-                  <div className="ap-fee-val">{currencySymbol}{docInfo.fees}</div>
+                  {/* ✅ ONLY CHANGE: hardcoded $ instead of currencySymbol */}
+                  <div className="ap-fee-val">${docInfo.fees}</div>
                 </div>
               </div>
             </div>

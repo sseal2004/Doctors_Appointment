@@ -173,7 +173,7 @@ const Navbar = () => {
           text-decoration: none;
           font-size: 13.5px;
           font-weight: 500;
-          color: #475569;
+          color: #ffff;
           padding: 7px 14px;
           border-radius: 9px;
           border: 1px solid transparent;
@@ -221,7 +221,7 @@ const Navbar = () => {
           font-family: 'Plus Jakarta Sans', sans-serif;
           font-size: 12.5px;
           font-weight: 600;
-          color: #94A3B8;
+          color: #ffff;
           background: rgba(30,41,59,0.6);
           border: 1px solid #1E293B;
           padding: 7px 14px;
@@ -331,7 +331,7 @@ const Navbar = () => {
           font-family: 'Plus Jakarta Sans', sans-serif;
           font-size: 13px;
           font-weight: 400;
-          color: #64748B;
+          color: #ffff;
           background: none;
           border: none;
           cursor: pointer;
@@ -362,7 +362,7 @@ const Navbar = () => {
         }
 
         .nb-dropdown-btn.logout {
-          color: #64748B;
+          color: #fff;
           border-top: 1px solid #1E293B;
         }
 
@@ -430,7 +430,7 @@ const Navbar = () => {
           text-decoration: none;
           font-size: 14px;
           font-weight: 500;
-          color: #475569;
+          color: #fff;
           padding: 10px 12px;
           border-radius: 9px;
           border: 1px solid transparent;
