@@ -19,7 +19,7 @@ const Navbar = () => {
   }
 
   const goToUserPanel = () => {
-    window.location.href = 'http://localhost:5175/'
+    window.location.href = 'https://doctors-appointment-ashy.vercel.app/'
   }
 
   const isOnDashboard =
