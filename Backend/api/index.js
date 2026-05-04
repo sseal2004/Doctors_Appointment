@@ -1,78 +1,43 @@
-import express from "express";
-import cors from "cors";
-import mongoose from "mongoose";
-import serverless from "serverless-http";
-import "dotenv/config";
+import express from 'express'
+import cors from 'cors'
+import 'dotenv/config'
+import mongoose from 'mongoose'
 
-import connectDB from "../config/mongodb.js";
-import connectCloudinary from "../config/cloudinary.js";
+import connectDB from '../config/mongodb.js'
+import connectCloudinary from '../config/cloudinary.js'
 
-import adminRouter from "../routes/adminRouter.js";
-import doctorRouter from "../routes/doctorRouter.js";
-import userRouter from "../routes/userRouter.js";
+import adminRouter from '../routes/adminRouter.js'
+import doctorRouter from '../routes/doctorRouter.js'
+import userRouter from '../routes/userRouter.js'
+app.use(cors({ origin: true, credentials: true }));
 
-const app = express();
+// app config
+const app = express()
 
-const allowedOrigins = [
-  "https://medcare-main.vercel.app",
-  "http://localhost:5173"
-];
+connectDB()
+connectCloudinary()
 
-app.use(cors({
-  origin: allowedOrigins,
-  credentials: true
-}));
-
-app.use(express.json());
+// middlewares
+app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 
-// ✅ Connect ONCE (NOT per request)
-let isConnected = false;
+// api endpoints
+app.use('/api/admin', adminRouter)
+app.use('/api/doctor', doctorRouter)
+app.use('/api/user', userRouter)
 
-const init = async () => {
-  if (!isConnected) {
-    await connectDB();
-    await connectCloudinary();
-    isConnected = true;
-    console.log("✅ DB Connected");
-  }
-};
-
-await init()let isConnected = false;
-
-const init = async () => {
-  if (!isConnected) {
-    await connectDB();
-    await connectCloudinary();
-    isConnected = true;
-    console.log("✅ DB Connected");
-  }
-};
-
-// call inside handler safely
-app.use(async (req, res, next) => {
-  try {
-    await init();
-    next();
-  } catch (err) {
-    console.error("❌ Init failed:", err);
-    res.status(500).json({ error: "Initialization failed" });
-  }
-});;
-
-// routes
-app.use("/api/admin", adminRouter);
-app.use("/api/doctor", doctorRouter);
-app.use("/api/user", userRouter);
-
+// test routes
 app.get("/", (req, res) => {
-  res.send("API Working ✅");
-});
+  res.send("API Working ✅")
+})
 
-// error handler
-app.use((err, req, res, next) => {
-  console.error("🔥 Error:", err);
-  res.status(500).json({ success: false, message: err.message });
-});
+app.get('/test-db', (req, res) => {
+  const state = mongoose.connection.readyState
+  if (state === 1) {
+    res.send('Database is connected ✅')
+  } else {
+    res.status(500).send('Database is NOT connected ❌')
+  }
+})
 
-export default serverless(app);
+export default app
