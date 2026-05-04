@@ -3,6 +3,7 @@ import { AppContext } from '../context/AppContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
+import { assets } from '../../assets/assets'
 
 
 
@@ -444,7 +445,7 @@ const Login = () => {
             <img src={heroImg} alt="Medical professionals" />
           */}
           <img
-            src="../../assets/loginHeroImage.png"
+            src="assets\loginHeroImage.png"
             alt="Medical professionals"
           />
           <div className="login-right-overlay" />

@@ -21,7 +21,7 @@ function App() {
   return (
     <div className="min-h-screen transition-colors duration-300">
       <Navbar />
-      <div className={isFullWidth ? 'w-full' : 'mx-auto max-w-screen-2xl px-2 sm:px-8 lg:px-0'}>
+      <div className={isFullWidth ? 'w-full' : 'mx-auto max-w-screen-2xl px-4 sm:px- lg:px-0'}>
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/doctors' element={<Doctors />} />
