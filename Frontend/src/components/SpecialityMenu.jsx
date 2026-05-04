@@ -412,7 +412,7 @@ const SpecialityMenu = () => {
             <span className="sm-divider-txt">Can't find your speciality?</span>
             <div className="sm-divider-line"></div>
           </div>
-          <a href="/doctors" className="sm-cta-btn">
+          <a href="https://medcare-main.vercel.app/doctors" className="sm-cta-btn">
             Browse all doctors
             <span className="sm-cta-arrow">→</span>
           </a>
