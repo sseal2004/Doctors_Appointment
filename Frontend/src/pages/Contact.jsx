@@ -532,7 +532,7 @@ const Contact = () => {
                   </div>
                   <button
                     className="cr-careers-btn"
-                    onClick={() => window.open("http://localhost:5174/", "_blank")}
+                    onClick={() => window.open("https://medcare-admin-theta.vercel.app/", "_blank")}
                   >
                     Explore Jobs →
                   </button>
