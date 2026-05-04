@@ -1,70 +1,65 @@
 import express from "express";
 import cors from "cors";
 import "dotenv/config";
-import mongoose from "mongoose";
-
 import connectDB from "../config/mongodb.js";
 import connectCloudinary from "../config/cloudinary.js";
-
 import adminRouter from "../routes/adminRouter.js";
 import doctorRouter from "../routes/doctorRouter.js";
 import userRouter from "../routes/userRouter.js";
 
 const app = express();
 
-// ✅ IMPORTANT: global connection flag
-let isConnected = false;
-
-// ✅ middleware
+// ── CORS ──────────────────────────────────────────────
 const allowedOrigins = [
   "https://medcare-main.vercel.app",
-  "http://localhost:5173"
+  "https://medcare-admin-theta.vercel.app",   // removed trailing slash
+  "http://localhost:5173",
+  "http://localhost:5174",
 ];
 
 app.use(cors({
   origin: function (origin, callback) {
+    // allow server-to-server / curl (no origin header)
     if (!origin) return callback(null, true);
-
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    } else {
-      return callback(new Error("CORS not allowed"));
-    }
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error(`CORS blocked: ${origin}`));
   },
-  credentials: true
+  credentials: true,
 }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ✅ routes
-app.use("/api/admin", adminRouter);
+// ── Routes ────────────────────────────────────────────
+app.use("/api/admin",  adminRouter);
 app.use("/api/doctor", doctorRouter);
-app.use("/api/user", userRouter);
+app.use("/api/user",   userRouter);
 
-// ✅ test route
-app.get("/", (req, res) => {
-  res.send("API Working ✅");
-});
+app.get("/", (_req, res) => res.send("API Working ✅"));
 
-app.get("/test-db", (req, res) => {
-  const state = mongoose.connection.readyState;
-  res.send(`DB State: ${state}`);
-});
+// ── DB connection — cached across warm invocations ───
+let dbConnected = false;
 
+async function ensureDB() {
+  if (dbConnected) return;
+  await connectDB();
+  await connectCloudinary();
+  dbConnected = true;
+}
 
-// ✅🔥 FINAL SERVERLESS HANDLER (MOST IMPORTANT)
+// ── Serverless handler ────────────────────────────────
 export default async function handler(req, res) {
-  if (!isConnected) {
-    try {
-      await connectDB();
-      await connectCloudinary();
-      isConnected = true;
-      console.log("✅ DB Connected");
-    } catch (err) {
-      console.error("❌ DB ERROR:", err);
-      return res.status(500).json({ error: "Database connection failed" });
-    }
+  try {
+    await ensureDB();
+  } catch (err) {
+    console.error("❌ Startup error:", err);
+    return res.status(500).json({ success: false, error: "Server initialisation failed", detail: err.message });
   }
 
-  return app(req, res);
+  // Hand off to Express
+  return new Promise((resolve) => {
+    res.on("finish", resolve);
+    res.on("close",  resolve);
+    app(req, res);
+  });
 }
