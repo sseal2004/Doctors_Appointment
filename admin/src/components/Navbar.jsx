@@ -19,7 +19,7 @@ const Navbar = () => {
   }
 
   const goToUserPanel = () => {
-    window.location.href = 'https://doctors-appointment-ashy.vercel.app/'
+    window.location.href = 'https://medcare-main.vercel.app/'
   }
 
   const isOnDashboard =
