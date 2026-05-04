@@ -38,7 +38,27 @@ const init = async () => {
   }
 };
 
-await init();
+await init()let isConnected = false;
+
+const init = async () => {
+  if (!isConnected) {
+    await connectDB();
+    await connectCloudinary();
+    isConnected = true;
+    console.log("✅ DB Connected");
+  }
+};
+
+// call inside handler safely
+app.use(async (req, res, next) => {
+  try {
+    await init();
+    next();
+  } catch (err) {
+    console.error("❌ Init failed:", err);
+    res.status(500).json({ error: "Initialization failed" });
+  }
+});;
 
 // routes
 app.use("/api/admin", adminRouter);
