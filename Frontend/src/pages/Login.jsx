@@ -441,7 +441,44 @@ const Login = () => {
         {/* ── RIGHT — uses assets.header_img (already in your assets) ── */}
         <div className="login-right">
           <img src={assets.header_img} alt="MedCare platform" />
-          
+          <div className="login-right-overlay" />
+          <div className="login-right-content">
+            <h2 className="right-headline">
+              Monitor Every<br />
+              <em>Patient. Live.</em>
+            </h2>
+            <p className="right-sub">
+              The MedCare Dashboard gives you a real-time view of all monitored patients,
+              active vitals, alerts, and staff coordination — all in one place.
+            </p>
+            <div className="right-features">
+              {[
+                { icon: '⚡', title: 'Live Patient Vitals Monitoring', desc: 'View real-time Heart Rate, SpO2, Temperature, and ECG readings from all connected patients.' },
+                { icon: '🔔', title: 'Instant Vitals Alert Management', desc: 'Receive, review, and resolve critical vitals alerts the moment they are triggered.' },
+                { icon: '👤', title: 'Coordination & Staff Control', desc: 'Manage patient assignments, staff schedules, and coordination feedback.' },
+              ].map((f, i) => (
+                <div key={i} className="right-feat">
+                  <div className="feat-icon">{f.icon}</div>
+                  <div>
+                    <div className="feat-title">{f.title}</div>
+                    <div className="feat-desc">{f.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="right-stats">
+              {[
+                { n: '50K+', l: 'Patients' },
+                { n: '4.9★', l: 'Rating' },
+                { n: '24/7', l: 'Support' },
+              ].map((s, i) => (
+                <div key={i}>
+                  <div className="rstat-num">{s.n}</div>
+                  <div className="rstat-lbl">{s.l}</div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
       </div>
