@@ -3,9 +3,7 @@ import { AppContext } from '../context/AppContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
-import { assets } from '../../assets/assets'
-
-
+import loginHeroImage from '../assets/loginHeroImage.png'   // ✅ proper import
 
 const Login = () => {
   const { backendUrl, token, setToken } = useContext(AppContext)
@@ -143,9 +141,7 @@ const Login = () => {
           color: #111827;
           margin-bottom: 8px;
         }
-        .login-headline-accent {
-          color: #3B82F6;
-        }
+        .login-headline-accent { color: #3B82F6; }
         .login-sub {
           font-size: 14px; font-weight: 300;
           color: #6B7280; line-height: 1.6;
@@ -167,9 +163,7 @@ const Login = () => {
           color: #374151; margin-bottom: 8px; display: block;
         }
 
-        .field-wrap {
-          position: relative; margin-bottom: 20px;
-        }
+        .field-wrap { position: relative; margin-bottom: 20px; }
 
         .field-icon {
           position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
@@ -243,10 +237,12 @@ const Login = () => {
           position: relative;
           overflow: hidden;
           display: flex;
+          background: #0f172a;        /* fallback bg while image loads */
         }
         .login-right img {
           width: 100%; height: 100%;
           object-fit: cover; object-position: center;
+          display: block;
         }
         .login-right-overlay {
           position: absolute; inset: 0;
@@ -271,12 +267,14 @@ const Login = () => {
           color: #fff; margin-bottom: 12px;
         }
         .right-headline em { font-style: normal; color: #60A5FA; }
-        .right-sub { font-size: 14px; color: rgba(255,255,255,0.65); font-weight: 300; line-height: 1.7; margin-bottom: 28px; max-width: 340px; }
+        .right-sub {
+          font-size: 14px; color: rgba(255,255,255,0.65);
+          font-weight: 300; line-height: 1.7;
+          margin-bottom: 28px; max-width: 340px;
+        }
 
         .right-features { display: flex; flex-direction: column; gap: 14px; margin-bottom: 32px; }
-        .right-feat {
-          display: flex; align-items: flex-start; gap: 12px;
-        }
+        .right-feat { display: flex; align-items: flex-start; gap: 12px; }
         .feat-icon {
           width: 36px; height: 36px; border-radius: 10px;
           background: rgba(59,130,246,0.25);
@@ -290,7 +288,10 @@ const Login = () => {
 
         .right-stats { display: flex; gap: 32px; }
         .rstat-num { font-size: 28px; font-weight: 800; color: #60A5FA; letter-spacing: -1px; }
-        .rstat-lbl { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.45); }
+        .rstat-lbl {
+          font-size: 10px; font-weight: 600; letter-spacing: 1.5px;
+          text-transform: uppercase; color: rgba(255,255,255,0.45);
+        }
 
         /* ── MOBILE ── */
         @media (max-width: 768px) {
@@ -342,7 +343,7 @@ const Login = () => {
               : 'Create your account to access 100+ verified specialists and book hassle-free appointments.'}
           </p>
 
-          {/* Card */}
+          {/* Form */}
           <form onSubmit={onSubmitHandler}>
             <div className="login-card">
 
@@ -437,19 +438,48 @@ const Login = () => {
           </form>
         </div>
 
-        {/* ── RIGHT — drop your image here ── */}
+        {/* ── RIGHT ── */}
         <div className="login-right">
-          {/*
-            Replace the src below with your actual image import:
-            import heroImg from '../assets/login-hero.jpg'
-            <img src={heroImg} alt="Medical professionals" />
-          */}
-          <img
-            src="assets\loginHeroImage.png"
-            alt="Medical professionals"
-          />
+          {/* ✅ Using imported variable — works on both localhost and Vercel */}
+          <img src={loginHeroImage} alt="Medical professionals" />
           <div className="login-right-overlay" />
-          
+          <div className="login-right-content">
+            <h2 className="right-headline">
+              Monitor Every<br />
+              <em>Patient. Live.</em>
+            </h2>
+            <p className="right-sub">
+              The MedCare User Dashboard gives you a Real-Time view of all monitored patients,
+              active vitals, alerts, procedures, and staff coordination — all in one place.
+            </p>
+            <div className="right-features">
+              {[
+                { icon: '⚡', title: 'Live Patient Vitals Monitoring', desc: 'View Real-Time Heart Rate, SpO2, Temperature, and ECG Readings from all connected patients.' },
+                { icon: '🔔', title: 'Instant Vitals Alert Management', desc: 'Receive, review, and resolve Critical Vitals and Condition Alerts the moment they are triggered.' },
+                { icon: '👤', title: 'Coordination & Staff Control', desc: 'Manage Patient Assignments, Staff Schedules, and Coordination Feedback.' },
+              ].map((f, i) => (
+                <div key={i} className="right-feat">
+                  <div className="feat-icon">{f.icon}</div>
+                  <div>
+                    <div className="feat-title">{f.title}</div>
+                    <div className="feat-desc">{f.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="right-stats">
+              {[
+                { n: '50K+', l: 'Patients' },
+                { n: '4.9★', l: 'Rating' },
+                { n: '24/7', l: 'Support' },
+              ].map((s, i) => (
+                <div key={i}>
+                  <div className="rstat-num">{s.n}</div>
+                  <div className="rstat-lbl">{s.l}</div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
       </div>
