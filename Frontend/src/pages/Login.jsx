@@ -3,7 +3,7 @@ import { AppContext } from '../context/AppContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
-import loginHeroImage from '../assets/loginHeroImage.png'   // ✅ proper import
+import { assets } from '../../assets/assets'   // ✅ use existing assets
 
 const Login = () => {
   const { backendUrl, token, setToken } = useContext(AppContext)
@@ -237,7 +237,7 @@ const Login = () => {
           position: relative;
           overflow: hidden;
           display: flex;
-          background: #0f172a;        /* fallback bg while image loads */
+          background: #0f172a;
         }
         .login-right img {
           width: 100%; height: 100%;
@@ -430,56 +430,18 @@ const Login = () => {
 
               <p className="login-footer-text">
                 {state === 'Sign Up'
-                  ? <>Already have an account?{' '}<span onClick={() => setState('Login')}>Sign in →</span></>
-                  : <>Don't have an account?{' '}<span onClick={() => setState('Sign Up')}>Create one →</span></>
+                  ? <><span>Already have an account? </span><span onClick={() => setState('Login')}>Sign in →</span></>
+                  : <><span>Don't have an account? </span><span onClick={() => setState('Sign Up')}>Create one →</span></>
                 }
               </p>
             </div>
           </form>
         </div>
 
-        {/* ── RIGHT ── */}
+        {/* ── RIGHT — uses assets.header_img (already in your assets) ── */}
         <div className="login-right">
-          {/* ✅ Using imported variable — works on both localhost and Vercel */}
-          <img src={loginHeroImage} alt="Medical professionals" />
-          <div className="login-right-overlay" />
-          <div className="login-right-content">
-            <h2 className="right-headline">
-              Monitor Every<br />
-              <em>Patient. Live.</em>
-            </h2>
-            <p className="right-sub">
-              The MedCare User Dashboard gives you a Real-Time view of all monitored patients,
-              active vitals, alerts, procedures, and staff coordination — all in one place.
-            </p>
-            <div className="right-features">
-              {[
-                { icon: '⚡', title: 'Live Patient Vitals Monitoring', desc: 'View Real-Time Heart Rate, SpO2, Temperature, and ECG Readings from all connected patients.' },
-                { icon: '🔔', title: 'Instant Vitals Alert Management', desc: 'Receive, review, and resolve Critical Vitals and Condition Alerts the moment they are triggered.' },
-                { icon: '👤', title: 'Coordination & Staff Control', desc: 'Manage Patient Assignments, Staff Schedules, and Coordination Feedback.' },
-              ].map((f, i) => (
-                <div key={i} className="right-feat">
-                  <div className="feat-icon">{f.icon}</div>
-                  <div>
-                    <div className="feat-title">{f.title}</div>
-                    <div className="feat-desc">{f.desc}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="right-stats">
-              {[
-                { n: '50K+', l: 'Patients' },
-                { n: '4.9★', l: 'Rating' },
-                { n: '24/7', l: 'Support' },
-              ].map((s, i) => (
-                <div key={i}>
-                  <div className="rstat-num">{s.n}</div>
-                  <div className="rstat-lbl">{s.l}</div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <img src={assets.header_img} alt="MedCare platform" />
+          
         </div>
 
       </div>

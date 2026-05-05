@@ -37,7 +37,6 @@ import Gynecologist from './Gynecologist.svg'
 import Neurologist from './Neurologist.svg'
 import Pediatricians from './Pediatricians.svg'
 import paypal_logo from './paypal_logo.png'
-import loginHeroImage from './loginHeroImage.png'
 
 
 export const assets = {
@@ -59,7 +58,6 @@ export const assets = {
     stripe_logo,
     razorpay_logo,
     paypal_logo,
-    loginHeroImage
 }
 
 export const specialityData = [
