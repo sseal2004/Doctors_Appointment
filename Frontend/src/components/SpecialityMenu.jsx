@@ -1,8 +1,10 @@
 import React from 'react'
 import { specialityData } from '../../assets/assets'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const SpecialityMenu = () => {
+  const navigate = useNavigate()   // ✅ inside the component
+
   return (
     <>
       <style>{`
@@ -405,17 +407,21 @@ const SpecialityMenu = () => {
           ))}
         </div>
 
-        {/* BOTTOM */}
+        {/* BOTTOM CTA */}
         <div className="sm-bottom">
           <div className="sm-divider">
             <div className="sm-divider-line"></div>
             <span className="sm-divider-txt">Can't find your speciality?</span>
             <div className="sm-divider-line"></div>
           </div>
-          <a href="https://medcare-main.vercel.app/doctors" className="sm-cta-btn">
+
+          <button
+            className="sm-cta-btn"
+            onClick={() => { navigate('/doctors'); scrollTo(0, 0) }}
+          >
             Browse all doctors
             <span className="sm-cta-arrow">→</span>
-          </a>
+          </button>
         </div>
       </div>
     </>

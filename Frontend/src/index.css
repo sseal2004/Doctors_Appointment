@@ -20,3 +20,28 @@ body {
     display: none;
   }
 }
+/* ── Smooth scrolling globally ── */
+html {
+  scroll-behavior: smooth;
+}
+ 
+/* ── Smooth scrollbar (optional — works in Chrome/Edge) ── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(31, 173, 150, 0.4) transparent;
+}
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(31, 173, 150, 0.35);
+  border-radius: 100px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(31, 173, 150, 0.6);
+}
+ 
